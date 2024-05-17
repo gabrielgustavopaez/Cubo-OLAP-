@@ -9,6 +9,7 @@ public class App {
         //clase Configuracion
 
         Tabla tablaventas = ReaderCSV.ReadFileCSV("./files/ventas.csv");
+        tablaventas.info();
         tablaventas.mostrar();
         Configuracion config = new Configuracion("./files/fechas.csv", "dim fechas");
         Cubo cuboOlap = new Cubo(config);
