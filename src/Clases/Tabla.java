@@ -1,8 +1,13 @@
 package Clases;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class Tabla {
+    private Map<String, Integer> posicionesColumnas;
     private List<String> columnas_nombres;//encabezados
     private List<List<String>> tabla;//datos
     private int columnas;
@@ -18,45 +23,77 @@ public class Tabla {
         this.columnas_nombres = new ArrayList<>(tabla.get(0));  // Defensive copy
         this.filas = this.tabla.size();
         this.columnas = this.filas > 0 ? tabla.get(0).size() : 0;
+        posicionesColumnas = new HashMap<>();
+
+        for (int i = 0; i < columnas_nombres.size(); i++) {
+            posicionesColumnas.put(columnas_nombres.get(i), i);
+        }
     }
-    /* 
-    public Tabla(List<List<String>> tabla) {
-        //System.out.println(tabla);
-        //CONTROLAR LOS VALORES DEL ANTES DE ASIGNAR (EXCEPTIONS)
-        this.tabla =  tabla.subList(1, tabla.size());//no controlado
-        this.filas = this.tabla.size()>1? this.tabla.size(): 0;
-        this.columnas = this.filas >= 1? tabla.get(0).size(): 0;
-        this.columnas_nombres = filas > 0?  tabla.get(0): null;
-    }
-    */
+
     public Tabla joinTables(Tabla a, Tabla b, String columna){
         Tabla union = new Tabla();
 
         return union;
     }
-    private int getColumnPosition(String columna) {
-        int pos = columnas_nombres.indexOf(columna);
-        if (pos == -1) {
-            throw new IllegalArgumentException("Columna '" + columna + "' not found in this table");
+
+
+    public Tabla joinTables(Tabla a, Tabla b, String columnaA, String columnaB) {
+        // Validate input
+        if (columnaA == null || columnaB == null || !a.columnas_nombres.contains(columnaA) || !b.columnas_nombres.contains(columnaB)) {
+            throw new IllegalArgumentException("Invalid join columns");
         }
-        return pos;
-    }
-    
-    private int posColumn(String columna){
-        //regresa la posicion de la columna en this.columnas_nombres
-        int pos = 0;
-        for (int i = 0; i < columnas_nombres.size(); i++) {
-            if(columna.equals(columnas_nombres.get(i))){
-                pos = i;
+
+        // Identify matching rows based on the join columns
+        Set<List<String>> matchingRows = new HashSet<>();
+        int posColA = a.getColumnPosition(columnaA);
+        int posColB = b.getColumnPosition(columnaB);
+        for (List<String> rowA : a.tabla) {
+            for (List<String> rowB : b.tabla) {
+                if (rowA.get(posColA).equals(rowB.get(posColB))) {
+                    matchingRows.add(rowA);
+                    matchingRows.add(rowB);
+                    break; // Avoid duplicates if multiple rows in B match a row in A
+                }
             }
         }
-        return pos;
+
+        // Create new table structure for the joined data
+        List<String> joinedColumns = new ArrayList<>();
+        joinedColumns.addAll(a.columnas_nombres);
+        for (String colName : b.columnas_nombres) {
+            if (!joinedColumns.contains(colName)) {
+                joinedColumns.add(colName);
+            }
+        }
+        Tabla joinedTable = new Tabla();
+        joinedTable.columnas_nombres = joinedColumns;
+
+        // Populate the joined table with data
+        for (List<String> row : matchingRows) {
+            joinedTable.tabla.add(new ArrayList<>(row));
+        }
+        joinedTable.filas = joinedTable.tabla.size();
+        joinedTable.columnas = joinedTable.columnas_nombres.size();
+        joinedTable.posicionesColumnas = new HashMap<>();
+        for (int i = 0; i < joinedTable.columnas_nombres.size(); i++) {
+            joinedTable.posicionesColumnas.put(joinedTable.columnas_nombres.get(i), i);
+        }
+
+        return joinedTable;
     }
+
+    private int getColumnPosition(String columna) {
+        if (!posicionesColumnas.containsKey(columna)) {
+            throw new IllegalArgumentException("Columna '" + columna + "' not found in this table");
+        }
+        return posicionesColumnas.get(columna);
+    }
+    
     public List<String> getColumnValues(String columna){
 
         List<String> columna_valores = new ArrayList<>();
         if(columnas_nombres.contains(columna)){
-           int pos = posColumn(columna);
+           int pos = getColumnPosition(columna);
            
            for (List<String> fila: tabla) {
                 columna_valores.add(fila.get(pos));
