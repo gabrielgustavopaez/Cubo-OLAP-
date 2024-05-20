@@ -24,5 +24,8 @@ Definir la estrutura para manejar toda la informacion
 * Hechos
 * lista de dimensiones
 * metodos asociados: (crear proyeccion)
+* crear metodo para cargar toda la informacion recibida por la configuracion.
+
+# En todos los casos hay que crear semi Historias de Usuario y anotar los problemas e inconvenientes que vayan surgiendo.
 
 constructor vacio, que inicialice los tipos de datos de la clase, un constructor que use inicial, y modificque.
