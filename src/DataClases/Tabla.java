@@ -246,18 +246,3 @@ public class Tabla {
     }
 
 }
-
-    /* 
-    public Map<String, String> getFilaByColumnaValor(String columna, String valor){
-        if (!this.contieneColumna(columna)) { throw new IllegalArgumentException("No contienen la columna solicitada."); }
-        List<String> columnaAsociada = getColumna(columna);
-        int pos = columnaAsociada.indexOf(valor);
-        if(pos == -1){ throw new IllegalArgumentException("No contienen el valor solicitado."); }
-        Map<String, String> fila = new HashMap<>();
-        for (String column : this.columnas) {
-            fila.put(columna, tabla.get(column).get(pos));
-        }
-        fila.remove(columna);
-        return fila;
-    }
-    */

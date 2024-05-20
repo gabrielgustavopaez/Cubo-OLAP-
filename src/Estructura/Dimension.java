@@ -1,8 +1,6 @@
 package Estructura;
 
-import java.util.List;
 import java.util.Map;
-
 import DataClases.Tabla;
 
 public class Dimension {
